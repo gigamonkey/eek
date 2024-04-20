@@ -1,0 +1,55 @@
+/* light reset */
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#game {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 10px;
+  font-size: 5vh;
+  margin: 20px;
+}
+
+#game div {
+  flex: 1;
+}
+
+
+#game div.question,
+#game div.answers div
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#game div.answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/*
+#game div.question {
+  background: #e0d4;
+}
+#game div.answers div {
+  background: #ff05;
+}
+*/
