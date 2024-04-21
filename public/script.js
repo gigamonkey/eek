@@ -1,6 +1,21 @@
 import { byId, $, $$ } from './dom.js'
 import { shuffled } from './random.js';
-import { State } from './learn.js';
+import { State } from './learn2.js';
+
+/*
+Sunny Yellow: #FFD700
+Electric Blue: #007BFF
+Tangerine: #F28500
+Hot Pink: #FF69B4
+Lime Green: #32CD32
+*/
+
+const questionColors = [
+  '#ffd700',
+  '#f28500',
+  '#ff69b4',
+  '#32cd32',
+];
 
 const colors  = [
   '#7F7EFF',
@@ -9,7 +24,6 @@ const colors  = [
   '#CC8B8C',
   '#C68866',
 ];
-
 
 const doc = byId();
 
@@ -26,18 +40,15 @@ const hh = (n) => n.toString(16).padStart(2, '0');
 const question = $('#game div.question');
 const answers = $$('#game div.answers div');
 
-question.style.background = randomColor();
-
-answers.forEach(e => {
-  const color = randomColor();
-  e.style.background = color;
-});
-
 const showCard = (card, deck) => {
+  card.asked++;
   question.innerText = card.q;
   const answerPosition = Math.floor(Math.random() * answers.length);
   const r = shuffled(card.d);
   r.splice(answerPosition, 0, card.a);
+  shuffled(questionColors).forEach((c, i) => {
+    answers[i].style.background = c;
+  });
   answers.forEach((e, i) => {
     e.innerText = r[i]
     if (i == answerPosition) {
@@ -64,10 +75,10 @@ const cards = [
 
 let current = null;
 
-let deck = new State(cards);
+let deck = new State(cards, [2, 3, 5, 8]);
 
 const next = () => {
-  current = deck.next();
+  current = deck.nextCard();
   if (current === null) {
     console.log('done');
     // FIXME: update
@@ -75,7 +86,9 @@ const next = () => {
   } else {
     showCard(current, deck);
   }
-  console.log(deck.summary());
+  console.log(JSON.stringify(deck.deck.map(c => ({q: c.q, asked: c.asked, pile: c.pile.size })), null, 2));
+  //console.log(`Current: ${JSON.stringify(current)}`);
+  //console.log(deck.summary());
 }
 
 next();

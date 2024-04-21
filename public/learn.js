@@ -15,6 +15,7 @@ class Row {
   }
 
   next() {
+    console.log(`Getting card from row of size ${this.size}`);
     return this.cards.pop();
   }
 
@@ -32,6 +33,7 @@ class State {
 
   constructor(cards) {
     this.deck = shuffled(cards);
+    this.deck.forEach(c => c.asked = 0);
     this.row = 0;
     this.rows = [];
 
@@ -63,10 +65,12 @@ class State {
   }
 
   summary() {
-    let s = `Rows: ${this.rows.length}\nIn deck: ${this.deck.length}\nCurrent row: ${this.row}\n`;
+    let s = `Rows: ${this.rows.length}\nIn deck: ${this.deck.length}; deck: ${JSON.stringify(this.deck, null, 2)}\nCurrent row: ${this.row}\n`;
     let total = this.deck.length;
     this.rows.forEach((r, i) => {
-      s += `  [${i}]: size: ${r.size}; cards: ${r.cards.length}\n`;
+      //s += `  [${i}]: size: ${r.size}; cards: ${r.cards.length}\n`;
+      s += i === this.row ? '*' : ' ';
+      s += ` [${i}]: size: ${r.size}; length: ${r.cards.length}; cards: ${JSON.stringify(r.cards, null, 2)}\n`;
       total += r.cards.length;
     });
     return s + `total cards: ${total}\n`;
@@ -85,6 +89,7 @@ class State {
         this.rows.length === 1 &&
         !this.currentRow().isOverfull())
     {
+      console.log(this.summary());
       return null;
     }
 
@@ -92,6 +97,7 @@ class State {
     // answer to some non-zero row or we added an incorrect answer to the zeroth
     // row and reset this.row to 0.
     if (this.currentRow().isOverfull()) {
+      console.log(`row ${this.row} is overfull getting card from it.`);
       return this.currentRow().next();
     }
 
@@ -99,10 +105,17 @@ class State {
     // overfull. In that case we need to fill it from the deck. If the deck is
     // empty we make the zeroth row the deck
     if (this.deck.length > 0) {
-      this.firstRow().add(this.deck.pop());
+      //console.log(`Adding card from deck to first row: row: ${this.row}`);
+      //this.firstRow().add(this.deck.pop());
+      console.log('Asking question from deck');
+      return this.deck.pop();
     } else {
+      console.log(`Making row 0 the deck.`);
       this.deck = this.rows.shift().cards;
+      this.row = 0; // wild guess
+      console.log(this.summary());
     }
+    console.log('Recursing in next');
     return this.next();
   }
 
@@ -113,11 +126,15 @@ class State {
   correct(card) {
     console.log(`${JSON.stringify(card)} is correct`);
     this.row++;
-    console.log(`Current row (${this.row}) is ${this.currentRow()}`);
+    console.log(`Current row (${this.row}) is ${JSON.stringify(this.currentRow())}`);
     this.currentRow().add(card);
     if (!this.currentRow().isOverfull()) {
       this.row = 0;
     }
+    // If we advanced to the next row and it is overfull we'll stay on that row
+    // and ask a question from that row which will then possibly get moved to
+    // yet the next row.
+    console.log(this.summary());
   }
 
   /*
@@ -128,6 +145,7 @@ class State {
     console.log(`${JSON.stringify(card)} is incorrect`);
     this.row = 0;
     this.deck.push(card);
+    console.log(this.summary());
   }
 }
 
