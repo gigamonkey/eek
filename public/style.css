@@ -14,6 +14,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: grey;
 }
 
 #game {
@@ -26,9 +27,16 @@ body {
   margin: 20px;
 }
 
-#game div {
-  flex: 1;
+#game div.progress {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
+
+#game div.question { flex: 2; }
+#game div.answers { flex: 3; }
+
 
 
 #game div.question,
