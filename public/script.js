@@ -91,8 +91,15 @@ const adjustCheese = (deck) => {
   let p = deck.zero.next;
   let opacity = step + step;
   while (p) {
-    p.cards.forEach(c => c.cheese.style.opacity = opacity);
-    opacity += step;
+    if (p == deck.last) {
+      p.cards.forEach(c => {
+        c.cheese.innerText = '🐭';
+        c.cheese.style.opacity = 1;
+      });
+    } else {
+      p.cards.forEach(c => c.cheese.style.opacity = opacity);
+      opacity += step;
+    }
     p = p.next;
   }
 };
