@@ -1,6 +1,6 @@
 import { byId, $, $$, html } from './dom.js'
 import { shuffled } from './random.js';
-import { State } from './learn2.js';
+import { State } from './learn.js';
 
 const nextKeys = new Set(['ArrowRight', 'ArrowUp', 'ArrowDown', 'ArrowLeft', ' ', 'Enter']);
 const numbers = new Set(['1', '2', '3', '4']);
@@ -31,18 +31,32 @@ let answerPosition;
 let currentCard = null;
 let locked = false;
 
+const moveChildren = (from, target) => {
+  target.replaceChildren();
+  [...from.childNodes].forEach(c => {
+    target.appendChild(c);
+  });
+};
+
+
 const showCard = (card) => {
   currentCard = card;
-  question.innerText = card.q;
+  const  html = card.html.cloneNode(true);
+
+  const q = html.querySelector('.q');
+  const a = html.querySelector('.answer');
+  const d = html.querySelectorAll('.distractors > div');
+
   answerPosition = Math.floor(Math.random() * answers.length);
-  const r = shuffled(card.d);
-  r.splice(answerPosition, 0, card.a);
+  const r = shuffled(d);
+  r.splice(answerPosition, 0, a);
+
   shuffled(questionColors).forEach((c, i) => {
     answers[i].style.background = c;
   });
-  answers.forEach((e, i) => {
-    e.innerText = r[i]
-  });
+
+  moveChildren(q, question);
+  answers.forEach((e, i) => moveChildren(r[i], e));
 };
 
 const doAnimation = (e, correct, clazz) => {
@@ -108,15 +122,9 @@ const highlightAnswer = (e) => {
   e.classList.add('correct');
 }
 
-const cards = [
-  {q: "2 + 2", a: 4, d: [1, 3, 5]},
-  {q: "10 * 10", a: 100, d: [10, 1, 0]},
-  {q: "Would a cow lick Lot's wife? ", a: "Yes", d: ["No", "Maybe", "Yuck"]},
-  {q: "What's up? ", a: "Chicken butt", d: ["What?", "Not much.", "'Sup"]},
-];
+const cards = [...$('#questions').children].map(html => ({ html }));
 
-
-let deck = new State(cards, [2, 3, 5, 8 ]);
+let deck = new State(cards, [ 2, 3, 5, 8 ]);
 
 addCheeseBar(cards);
 adjustCheese(deck);

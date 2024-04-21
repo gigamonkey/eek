@@ -17,6 +17,10 @@ body {
   background: grey;
 }
 
+#questions {
+  display: none;
+}
+
 #game {
   flex: 1;
   display: flex;

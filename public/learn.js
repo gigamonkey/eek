@@ -2,28 +2,96 @@ import { $, $$ } from './dom.js';
 import { shuffled } from './random.js';
 
 /*
- * A row of cards that can hold a certain number of cards.
+
+  Cards are put into piles ordered by capacity. They all start in the zeroth
+  pile. They are moved from pile to pile, always taking from the rightmost
+  (largest capacity) pile where the pile to its right has room for another card.
+  When the card is answered correctly it is moved to the next pile. When it is
+  answered incorrectly it is moved back to the nearest pile to the left that has
+  room for it. Most of the time that will be the zeroth pile which is special in
+  that it can always accept a card. But toward the end of the deck, when all
+  cards have been answered correctly multiple times we don't want to put one
+  card all the way back to the beginning and have to ask just that one card
+  repeatedly to move it back up so we only move it back part way.
+
  */
-class Row {
-  constructor(size) {
+
+/*
+ * A pile of cards that can hold a certain number of cards.
+ */
+class Pile {
+  constructor(size, previous) {
     this.size = size;
     this.cards = [];
+    this.previous = previous;
+    previous.next = this;
+    this.next = null;
   }
 
-  isOverfull() {
-    return this.cards.length > this.size;
+  isEmpty() {
+    return this.cards.length === 0;
   }
 
-  next() {
-    console.log(`Getting card from row of size ${this.size}`);
-    return this.cards.pop();
+  isFull() {
+    return this.cards.length == this.size;
+  }
+
+  nextCard() {
+    console.log(`Getting card from pile of size ${this.size}`);
+    if (this.isEmpty()) {
+      throw new Error(`Trying to get card from empty pile of size ${this.size}.`);
+    }
+
+    if (this.next !== null) {
+      return this.cards.pop();
+    } else {
+      // The last pile has no next and therefore we never take a card from it
+      return null;
+    }
   }
 
   add(card) {
+    card.pile = this;
     this.cards.unshift(card);
   }
-
 }
+
+class ZeroPile {
+  constructor(cards) {
+    this.unasked = [...cards];
+    this.unasked.forEach(c => c.pile = this);
+    this.wrong = [];
+  }
+
+  isEmpty() {
+    return this.unasked.length === 0 && this.wrong.length === 0;
+  }
+
+  isFull() {
+    return false;
+  }
+
+  nextCard() {
+    // Possibly should mix in some unasked questions even when there are wrong
+    // answers. Otherwise early on
+
+
+    if (this.wrong.length > 0) {
+      console.log(`Getting card from wrong list`);
+      return this.wrong.pop();
+    } else if (this.unasked.length > 0) {
+      console.log(`Getting card from unasked list`);
+      return this.unasked.pop();
+    } else {
+      throw new Error("Trying to get card from empty zero pile.");
+    }
+  }
+
+  add(card) {
+    this.wrong.unshift(card);
+  }
+}
+
 
 /*
  * The overall state of where we are in the quiz. Manages a deck of cards which
@@ -31,121 +99,54 @@ class Row {
  */
 class State {
 
-  constructor(cards) {
+  constructor(cards, pileSizes) {
     this.deck = shuffled(cards);
     this.deck.forEach(c => c.asked = 0);
-    this.row = 0;
-    this.rows = [];
-
-    let a = 0;
-    let b = 1;
-    while (a < this.deck.length) {
-      this.rows.push(new Row(a));
-      [ a, b ] = [ b, a + b ];
-    }
-    this.rows.push(new Row(a));
-
-    this.steps = this.deck.length * this.rows.length;
-  }
-
-  done() {
-    return (this.deck.length * this.rows.length)
-      + this.rows.reduce((acc, row, i) => acc + ((this.rows.length - (i + 1)) * row.cards.length), 0)
-      + this.rows.length - this.row;
-  }
-
-  togo() { return this.steps - this.done(); }
-
-  firstRow() {
-    return this.rows[0];
-  }
-
-  currentRow() {
-    return this.rows[this.row];
-  }
-
-  summary() {
-    let s = `Rows: ${this.rows.length}\nIn deck: ${this.deck.length}; deck: ${JSON.stringify(this.deck, null, 2)}\nCurrent row: ${this.row}\n`;
-    let total = this.deck.length;
-    this.rows.forEach((r, i) => {
-      //s += `  [${i}]: size: ${r.size}; cards: ${r.cards.length}\n`;
-      s += i === this.row ? '*' : ' ';
-      s += ` [${i}]: size: ${r.size}; length: ${r.cards.length}; cards: ${JSON.stringify(r.cards, null, 2)}\n`;
-      total += r.cards.length;
+    this.numPiles = pileSizes.length + 2;
+    this.done = [];
+    this.zero = new ZeroPile(this.deck);
+    let previous = this.zero;
+    pileSizes.forEach(s => {
+      previous = new Pile(s, previous);
     });
-    return s + `total cards: ${total}\n`;
+    this.last = new Pile(this.deck.length, previous);
   }
 
   /*
-   * Get the next card to present.
+   * Get the next card to present. If all the cards are in the last pile. then
+   * we're done and this will return null.
    */
-  next() {
-
-    // If we've emptied the deck and there is only one row left and it is not
-    // full, there is no next as we've moved everything into a sufficiently
-    // large row and are done.
-
-    if (this.deck.length === 0 &&
-        this.rows.length === 1 &&
-        !this.currentRow().isOverfull())
-    {
-      console.log(this.summary());
-      return null;
+  nextCard() {
+    let p = this.zero;
+    while (p !== this.last) {
+      if (!p.isEmpty() && !p.next.isFull()) {
+        break;
+      }
+      p = p.next;
     }
-
-    // We are either in the middle of moving up, having just added a correct
-    // answer to some non-zero row or we added an incorrect answer to the zeroth
-    // row and reset this.row to 0.
-    if (this.currentRow().isOverfull()) {
-      console.log(`row ${this.row} is overfull getting card from it.`);
-      return this.currentRow().next();
-    }
-
-    // If we get here, it's because we are back at the zeroth row and it is not
-    // overfull. In that case we need to fill it from the deck. If the deck is
-    // empty we make the zeroth row the deck
-    if (this.deck.length > 0) {
-      //console.log(`Adding card from deck to first row: row: ${this.row}`);
-      //this.firstRow().add(this.deck.pop());
-      console.log('Asking question from deck');
-      return this.deck.pop();
-    } else {
-      console.log(`Making row 0 the deck.`);
-      this.deck = this.rows.shift().cards;
-      this.row = 0; // wild guess
-      console.log(this.summary());
-    }
-    console.log('Recursing in next');
-    return this.next();
+    return p.nextCard();
   }
 
   /*
-   * Return the card that was just asked as correct to be slotted back into the
-   * state of the world. When a card is correct we move it to the next row.
+   * Correct cards move to the next pile.
    */
   correct(card) {
-    console.log(`${JSON.stringify(card)} is correct`);
-    this.row++;
-    console.log(`Current row (${this.row}) is ${JSON.stringify(this.currentRow())}`);
-    this.currentRow().add(card);
-    if (!this.currentRow().isOverfull()) {
-      this.row = 0;
-    }
-    // If we advanced to the next row and it is overfull we'll stay on that row
-    // and ask a question from that row which will then possibly get moved to
-    // yet the next row.
-    console.log(this.summary());
+    card.pile.next.add(card);
   }
 
   /*
-   * Return the card that was just asked as incorrect to be slotted back into
-   * the state of the world.
+   * Incorrect cards move back to the previous non full pile or to the zero pile
+   * if that's where they came from.
    */
   incorrect(card) {
-    console.log(`${JSON.stringify(card)} is incorrect`);
-    this.row = 0;
-    this.deck.push(card);
-    console.log(this.summary());
+    let p = card.pile;
+    while (p !== this.zero) {
+      p = p.previous;
+      if (!p.isFull()) {
+        break;
+      }
+    }
+    p.add(card);
   }
 }
 
