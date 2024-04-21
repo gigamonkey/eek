@@ -2,48 +2,28 @@ import { byId, $, $$ } from './dom.js'
 import { shuffled } from './random.js';
 import { State } from './learn2.js';
 
-/*
-Sunny Yellow: #FFD700
-Electric Blue: #007BFF
-Tangerine: #F28500
-Hot Pink: #FF69B4
-Lime Green: #32CD32
-*/
-
 const questionColors = [
-  '#ffd700',
-  '#f28500',
-  '#ff69b4',
-  '#32cd32',
-];
-
-const colors  = [
-  '#7F7EFF',
-  '#A390E4',
-  '#C69DD2',
-  '#CC8B8C',
-  '#C68866',
+  '#ffd700', // sunny yellow
+  '#f28500', // tangerine
+  '#ff69b4', // hot pink
+  '#32cd32', // lime green
 ];
 
 const doc = byId();
 
-const randomColor = () => {
-  const r = Math.floor(Math.random() * 255);
-  const g = Math.floor(Math.random() * 255);
-  const b = Math.floor(Math.random() * 255);
-  const a = Math.floor(Math.random() * 255);
-  return `#${hh(r)}${hh(g)}${hh(b)}${hh(a)}`;
-};
-
-const hh = (n) => n.toString(16).padStart(2, '0');
-
 const question = $('#game div.question');
 const answers = $$('#game div.answers div');
 
-const showCard = (card, deck) => {
+let answerPosition;
+let currentCard;
+
+answers.forEach((e, i) => e.onclick = () => choose(i));
+
+const showCard = (card) => {
+  currentCard = card;
   card.asked++;
   question.innerText = card.q;
-  const answerPosition = Math.floor(Math.random() * answers.length);
+  answerPosition = Math.floor(Math.random() * answers.length);
   const r = shuffled(card.d);
   r.splice(answerPosition, 0, card.a);
   shuffled(questionColors).forEach((c, i) => {
@@ -51,20 +31,48 @@ const showCard = (card, deck) => {
   });
   answers.forEach((e, i) => {
     e.innerText = r[i]
-    if (i == answerPosition) {
-      e.onclick = () => {
-        deck.correct(card);
-        next();
-      };
-    } else {
-      e.onclick = () => {
-        deck.incorrect(card);
-        next();
-      };
-    }
   });
 };
 
+const choose = (i) => {
+  if (currentCard) {
+    if (i == answerPosition) {
+      deck.correct(currentCard);
+      highlightAnswer(answers[answerPosition]);
+      answers[i].onanimationend = () => {
+        highlightAnswer(answers[answerPosition]);
+        answers[i].classList.remove('zoom');
+      }
+      answers[i].classList.add('zoom');
+    } else {
+      deck.incorrect(currentCard);
+      answers[i].onanimationend = () => {
+        highlightAnswer(answers[answerPosition]);
+        answers[i].classList.remove('shake');
+      }
+      answers[i].classList.add('shake');
+    }
+    currentCard = null;
+  } else {
+    next();
+  }
+};
+
+
+const nextKeys = new Set(['ArrowRight', 'ArrowUp', 'ArrowDown', 'ArrowLeft', ' ', 'Enter']);
+const numbers = new Set(['1', '2', '3', '4']);
+
+document.onkeydown = (e) => {
+  if (nextKeys.has(e.key) && !currentCard) {
+    next();
+  } else if (numbers.has(e.key)) {
+    choose(parseInt(e.key - 1));
+  }
+};
+
+const highlightAnswer = (e) => {
+  e.classList.add('correct');
+}
 
 const cards = [
   {q: "2 + 2", a: 4, d: [1, 3, 5]},
@@ -78,9 +86,9 @@ let current = null;
 let deck = new State(cards, [2, 3, 5, 8]);
 
 const next = () => {
+  $$('#game div.answers div.correct').forEach(e => e.classList.remove('correct'));
   current = deck.nextCard();
   if (current === null) {
-    console.log('done');
     // FIXME: update
     doc.game.replaceChildren();
   } else {
