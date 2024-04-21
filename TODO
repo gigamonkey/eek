@@ -1,0 +1,10 @@
+# TODO
+
+- Indicate whether answer was correct or incorrect and show correct answer if needed
+
+- Some kind of progress indicator. Maybe a cheese emoji each time you get a
+  question right
+
+- Something better than a blank screen when you answer all the questions.
+
+- Put cards directly in HTML.
