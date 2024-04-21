@@ -102,6 +102,7 @@ class State {
   constructor(cards, pileSizes) {
     this.deck = shuffled(cards);
     this.deck.forEach(c => c.asked = 0);
+    this.numPiles = pileSizes.length + 2;
     this.done = [];
     this.zero = new ZeroPile(this.deck);
     let previous = this.zero;

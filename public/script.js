@@ -45,34 +45,57 @@ const showCard = (card) => {
   });
 };
 
+const doAnimation = (e, correct, clazz) => {
+  e.onanimationend = () => {
+    highlightAnswer(correct);
+    e.classList.remove(clazz);
+    adjustCheese(deck);
+    locked = false;
+  };
+  e.classList.add(clazz);
+};
+
 const choose = (i) => {
   if (!locked) {
     if (currentCard) {
       locked = true;
+      const correct = answers[answerPosition];
       if (i == answerPosition) {
         deck.correct(currentCard);
-        answers[i].onanimationend = () => {
-          highlightAnswer(answers[answerPosition]);
-          answers[i].classList.remove('zoom');
-          locked = false;
-        }
-        answers[i].classList.add('zoom');
+        doAnimation(answers[i], correct, 'zoom');
       } else {
         deck.incorrect(currentCard);
-        answers[i].onanimationend = () => {
-          highlightAnswer(answers[answerPosition]);
-          answers[i].classList.remove('shake');
-          locked = false;
-        }
-        answers[i].classList.add('shake');
+        doAnimation(answers[i], correct, 'shake');
       }
       currentCard = null;
     } else {
       next();
     }
   }
+
 }
 
+const addCheeseBar = (cards) => {
+  const bar = $('#game div.progress');
+  cards.forEach(c => {
+    c.cheese = html('<span>🧀</span>');
+    c.cheese.style.opacity = 0;
+    bar.append(c.cheese);
+  });
+};
+
+const adjustCheese = (deck) => {
+  const step = 1.0 / (deck.numPiles);
+  deck.deck.forEach(c => c.cheese.style.opacity = step);
+
+  let p = deck.zero.next;
+  let opacity = step + step;
+  while (p) {
+    p.cards.forEach(c => c.cheese.style.opacity = opacity);
+    opacity += step;
+    p = p.next;
+  }
+};
 
 const highlightAnswer = (e) => {
   e.classList.add('correct');
@@ -85,7 +108,11 @@ const cards = [
   {q: "What's up? ", a: "Chicken butt", d: ["What?", "Not much.", "'Sup"]},
 ];
 
+
 let deck = new State(cards, [2, 3, 5, 8 ]);
+
+addCheeseBar(cards);
+adjustCheese(deck);
 
 const next = () => {
   $$('#game div.answers div.correct').forEach(e => e.classList.remove('correct'));
