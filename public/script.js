@@ -1,6 +1,9 @@
-import { byId, $, $$ } from './dom.js'
+import { byId, $, $$, html } from './dom.js'
 import { shuffled } from './random.js';
 import { State } from './learn2.js';
+
+const nextKeys = new Set(['ArrowRight', 'ArrowUp', 'ArrowDown', 'ArrowLeft', ' ', 'Enter']);
+const numbers = new Set(['1', '2', '3', '4']);
 
 const questionColors = [
   '#ffd700', // sunny yellow
@@ -14,14 +17,22 @@ const doc = byId();
 const question = $('#game div.question');
 const answers = $$('#game div.answers div');
 
-let answerPosition;
-let currentCard;
-
 answers.forEach((e, i) => e.onclick = () => choose(i));
+
+document.onkeydown = (e) => {
+  if (nextKeys.has(e.key) && !currentCard && !locked) {
+    next();
+  } else if (numbers.has(e.key)) {
+    choose(parseInt(e.key - 1));
+  }
+};
+
+let answerPosition;
+let currentCard = null;
+let locked = false;
 
 const showCard = (card) => {
   currentCard = card;
-  card.asked++;
   question.innerText = card.q;
   answerPosition = Math.floor(Math.random() * answers.length);
   const r = shuffled(card.d);
@@ -35,40 +46,33 @@ const showCard = (card) => {
 };
 
 const choose = (i) => {
-  if (currentCard) {
-    if (i == answerPosition) {
-      deck.correct(currentCard);
-      highlightAnswer(answers[answerPosition]);
-      answers[i].onanimationend = () => {
-        highlightAnswer(answers[answerPosition]);
-        answers[i].classList.remove('zoom');
+  if (!locked) {
+    if (currentCard) {
+      locked = true;
+      if (i == answerPosition) {
+        deck.correct(currentCard);
+        answers[i].onanimationend = () => {
+          highlightAnswer(answers[answerPosition]);
+          answers[i].classList.remove('zoom');
+          locked = false;
+        }
+        answers[i].classList.add('zoom');
+      } else {
+        deck.incorrect(currentCard);
+        answers[i].onanimationend = () => {
+          highlightAnswer(answers[answerPosition]);
+          answers[i].classList.remove('shake');
+          locked = false;
+        }
+        answers[i].classList.add('shake');
       }
-      answers[i].classList.add('zoom');
+      currentCard = null;
     } else {
-      deck.incorrect(currentCard);
-      answers[i].onanimationend = () => {
-        highlightAnswer(answers[answerPosition]);
-        answers[i].classList.remove('shake');
-      }
-      answers[i].classList.add('shake');
+      next();
     }
-    currentCard = null;
-  } else {
-    next();
   }
-};
+}
 
-
-const nextKeys = new Set(['ArrowRight', 'ArrowUp', 'ArrowDown', 'ArrowLeft', ' ', 'Enter']);
-const numbers = new Set(['1', '2', '3', '4']);
-
-document.onkeydown = (e) => {
-  if (nextKeys.has(e.key) && !currentCard) {
-    next();
-  } else if (numbers.has(e.key)) {
-    choose(parseInt(e.key - 1));
-  }
-};
 
 const highlightAnswer = (e) => {
   e.classList.add('correct');
@@ -81,22 +85,16 @@ const cards = [
   {q: "What's up? ", a: "Chicken butt", d: ["What?", "Not much.", "'Sup"]},
 ];
 
-let current = null;
-
-let deck = new State(cards, [2, 3, 5, 8]);
+let deck = new State(cards, [2, 3, 5, 8 ]);
 
 const next = () => {
   $$('#game div.answers div.correct').forEach(e => e.classList.remove('correct'));
-  current = deck.nextCard();
-  if (current === null) {
-    // FIXME: update
-    doc.game.replaceChildren();
+  const card = deck.nextCard();
+  if (card === null) {
+    document.body.replaceChildren(html('<img src="mouse.webp">'));
   } else {
-    showCard(current, deck);
+    showCard(card);
   }
-  console.log(JSON.stringify(deck.deck.map(c => ({q: c.q, asked: c.asked, pile: c.pile.size })), null, 2));
-  //console.log(`Current: ${JSON.stringify(current)}`);
-  //console.log(deck.summary());
 }
 
 next();
