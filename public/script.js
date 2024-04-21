@@ -91,7 +91,7 @@ const next = () => {
   $$('#game div.answers div.correct').forEach(e => e.classList.remove('correct'));
   const card = deck.nextCard();
   if (card === null) {
-    document.body.replaceChildren(html('<img src="mouse.webp">'));
+    document.body.replaceChildren(html('<img src="mouse.png">'));
   } else {
     showCard(card);
   }
