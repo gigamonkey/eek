@@ -29,15 +29,28 @@ body {
   background: white;
   border: thin solid black;
   text-align: center;
-  padding: 1em;
+  padding: 1em 5em;
   background: #007bff; /* electric blue */
   color: white;
   margin: 10vh auto;
 }
 
 #splash h1 {
+  font-size: 4rem;
+  margin-bottom: 1em;
+}
+
+#splash h2 {
   font-size: 3rem;
   margin-bottom: 1em;
+}
+
+#splash p.mice {
+  font-size: 3rem;
+}
+
+#splash p.hitanykey {
+  font-weight: 600;
 }
 
 #splash p {
