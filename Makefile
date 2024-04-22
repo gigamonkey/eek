@@ -6,3 +6,6 @@ public/index.html: questions.yml
 
 publish:
 	rsync -r public/ ~/hacks/bhs-cs-classes/eek/
+
+diff:
+	diff -qr public/ ~/hacks/bhs-cs-classes/eek/
