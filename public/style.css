@@ -1,6 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Montserrat:wght@100;300;400;500&display=swap');
+
 /* light reset */
 html {
   box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
 }
 
 *, *:before, *:after {
@@ -17,13 +22,36 @@ body {
   background: grey;
 }
 
+#splash {
+  flex: 0 0 auto;
+  width: 80vw;
+  height: 80vh;
+  background: white;
+  border: thin solid black;
+  text-align: center;
+  padding: 1em;
+  background: #007bff; /* electric blue */
+  color: white;
+  margin: 10vh auto;
+}
+
+#splash h1 {
+  font-size: 3rem;
+  margin-bottom: 1em;
+}
+
+#splash p {
+  font-size: 2rem;
+  margin-bottom: 1em;
+}
+
 #questions {
   display: none;
 }
 
 #game {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   text-align: center;
   gap: 10px;

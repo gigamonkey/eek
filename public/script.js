@@ -12,6 +12,8 @@ const questionColors = [
   '#32cd32', // lime green
 ];
 
+const game = $('#game');
+
 const doc = byId();
 
 const question = $('#game div.question');
@@ -19,11 +21,18 @@ const answers = $$('#game div.answers div');
 
 answers.forEach((e, i) => e.onclick = () => choose(i));
 
+game.remove();
+
 document.onkeydown = (e) => {
-  if (nextKeys.has(e.key) && !currentCard && !locked) {
-    next();
-  } else if (numbers.has(e.key)) {
-    choose(parseInt(e.key - 1));
+  if ($('#splash').offsetParent !== null) {
+    $('#splash').style.display = 'none';
+    start(game);
+  } else {
+    if (!currentCard && !locked) {
+      next();
+    } else if (numbers.has(e.key)) {
+      choose(parseInt(e.key - 1));
+    }
   }
 };
 
@@ -64,7 +73,10 @@ const doAnimation = (e, correct, clazz) => {
     highlightAnswer(correct);
     e.classList.remove(clazz);
     adjustCheese(deck);
-    locked = false;
+    setTimeout(() => {
+      next();
+      locked = false;
+    }, clazz === 'zoom' ? 400 : 800);
   };
   e.classList.add(clazz);
 };
@@ -123,11 +135,8 @@ const highlightAnswer = (e) => {
 }
 
 const cards = [...$('#questions').children].map(html => ({ html }));
-
 let deck = new State(cards, [ 3, 5 ]);
 
-addCheeseBar(cards);
-adjustCheese(deck);
 
 const next = () => {
   $$('#game div.answers div.correct').forEach(e => e.classList.remove('correct'));
@@ -139,4 +148,11 @@ const next = () => {
   }
 }
 
-next();
+const start = (game) => {
+  document.body.append(game);
+
+
+  addCheeseBar(cards);
+  adjustCheese(deck);
+  next();
+};

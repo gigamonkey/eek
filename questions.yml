@@ -40,7 +40,7 @@ Which of the following is illegal:
     - double d = 1.0;
     - double d = 1;
 
-Whic of the following is not a literal value:
+Which of the following is not a literal value:
   answer: new ArrayList<>();
   distractors:
     - "1234"
