@@ -7,10 +7,10 @@ const template = fs.readFileSync('public/index.html', 'utf8')
 
 const makeQuestion = (question, data) => {
   const distractors = $('<div>').addClass('distractors');
-  data.distractors.forEach(d => distractors.append($('<div>').append(d)));
+  data.distractors.forEach(d => distractors.append($('<div>').text(d)));
   return $('<div>')
-    .append($('<div>').append(question).addClass('q'))
-    .append($('<div>').append(data.answer).addClass('answer'))
+    .append($('<div>').text(question).addClass('q'))
+    .append($('<div>').text(data.answer).addClass('answer'))
     .append(distractors);
 };
 
