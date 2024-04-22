@@ -8,12 +8,11 @@
 
 - ~Put cards directly in HTML.~
 
-- Figure out way to write cards in Markup or something better than HTML
+- ~Opening splash screen with instructions~
+
+- ~Figure out way to write cards in Markup or something better than HTML~
 
 - Write actual CSA cards.
 
-- Opening splash screen with instructions
-
-- Something better than a blank screen when you answer all the questions. Maybe
-  a score page that lists all the questions and how many times you answered each
-  one correctly and incorrectly.
+- Add stats to the ending page that lists all the questions and how many times
+  you answered each one correctly and incorrectly.
