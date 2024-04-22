@@ -27,7 +27,7 @@ Logical values are represented by:
     - Strings
 
 int values can represent:
-  answer: whole numbers
+  answer: numbers with no fractional part
   distractors:
     - any number
     - positive numbers
