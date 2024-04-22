@@ -1,0 +1,48 @@
+A type is a:
+  answer: set of values and a set of operations on them.
+  distractors:
+    - value that can be passed to a method.
+    - way of organizing different classes.
+    - name for a value.
+
+All data types in Java are either:
+  answer: primitive or reference
+  distractors:
+    - a field or method
+    - string or numeric
+    - a parent or child class
+
+The primitive data types on the AP exam are:
+  answer: int, double, and boolean
+  distractors:
+    - String and arrays
+    - Integer, Double, and Boolean
+    - Object, Math, String
+
+Logical values are represented by:
+  answer: booleans
+  distractors:
+    - ints
+    - doubles
+    - Strings
+
+int values can represent:
+  answer: whole numbers
+  distractors:
+    - any number
+    - positive numbers
+    - only numbers less than 1,000,000
+
+Which of the following is illegal:
+  answer: int x = 1.0;
+  distractors:
+    - int x = 1;
+    - double d = 1.0;
+    - double d = 1;
+
+Whic of the following is not a literal value:
+  answer: new ArrayList<>();
+  distractors:
+    - "1234"
+    - '"foobar"'
+    - "true"

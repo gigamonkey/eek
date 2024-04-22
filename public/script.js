@@ -124,7 +124,7 @@ const highlightAnswer = (e) => {
 
 const cards = [...$('#questions').children].map(html => ({ html }));
 
-let deck = new State(cards, [ 2, 3, 5, 8 ]);
+let deck = new State(cards, [ 3, 5 ]);
 
 addCheeseBar(cards);
 adjustCheese(deck);

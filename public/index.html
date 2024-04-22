@@ -1,43 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width,initial-scale=1" name="viewport">
-  <title>EEK! CSA</title>
-  <link href="style.css" rel="stylesheet" type="text/css">
-  <script src="script.js" type="module"></script>
-</head>
-<body>
-  <div id="questions">
-    <div>
-      <div class="q">A type is a ...</div>
-      <div class="answer">... set of values (a domain) and a set of operations on them.</div>
-      <div class="distractors">
-        <div>... is a value that can be passed to a method.</div>
-        <div>... a way of organizing different classes.</div>
-        <div>... a kind of value built into Java.</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <title>EEK! CSA</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="script.js" type="module"></script>
+  </head>
+  <body>
+    <div id="questions">
+      <div>
+        <div class="q">A type is a</div>
+        <div class="answer">set of values and a set of operations on them.</div>
+        <div class="distractors">
+          <div>value that can be passed to a method.</div>
+          <div>way of organizing different classes.</div>
+          <div>name for a value.</div>
+        </div>
+      </div>
+      <div>
+        <div class="q">All data types in Java are either</div>
+        <div class="answer">primitive or reference</div>
+        <div class="distractors">
+          <div>a field or method</div>
+          <div>string or numeric</div>
+          <div>a parent or child class</div>
+        </div>
+      </div>
+      <div>
+        <div class="q">The primitive data types on the AP exam are</div>
+        <div class="answer">int, double, and boolean</div>
+        <div class="distractors">
+          <div>String and arrays</div>
+          <div>Integer, Double, and Boolean</div>
+          <div>Object, Math, String</div>
+        </div>
+      </div>
+      <div>
+        <div class="q">Logical values are represented by</div>
+        <div class="answer">booleans</div>
+        <div class="distractors">
+          <div>ints</div>
+          <div>doubles</div>
+          <div>Strings</div>
+        </div>
+      </div>
+      <div>
+        <div class="q">int values can represent</div>
+        <div class="answer">whole numbers</div>
+        <div class="distractors">
+          <div>any number</div>
+          <div>positive numbers</div>
+          <div>only numbers less than 1,000,000</div>
+        </div>
+      </div>
+      <div>
+        <div class="q">Which of the following is illegal</div>
+        <div class="answer">int x = 1.0;</div>
+        <div class="distractors">
+          <div>int x = 1;</div>
+          <div>double d = 1.0;</div>
+          <div>double d = 1;</div>
+        </div>
+      </div>
+      <div>
+        <div class="q">Whic of the following is not a literal value</div>
+        <div class="answer">new ArrayList&lt;&gt;();</div>
+        <div class="distractors">
+          <div>1234</div>
+          <div>"foobar"</div>
+          <div>true</div>
+        </div>
       </div>
     </div>
-    <div>
-      <div class="q">Data types in Java are either:</i></div>
-      <div class="answer">primitives or references</div>
-      <div class="distractors">
-        <div>fields or methods</div>
-        <div>string or numbers</div>
-        <div>parent or child classes</div>
+    <div id="game">
+      <div class="question"><p>Question</p></div>
+      <div class="answers">
+        <div>Answer 1</div>
+        <div>Answer 2</div>
+        <div>Answer 3</div>
+        <div>Answer 4</div>
       </div>
+      <div class="progress"></div>
     </div>
-  </div>
-  <div id="game">
-    <div class="question"><p>Question</p></div>
-    <div class="answers">
-      <div>Answer 1</div>
-      <div>Answer 2</div>
-      <div>Answer 3</div>
-      <div>Answer 4</div>
-    </div>
-    <div class="progress">
-    </div>
-  </div>
-</body>
+  </body>
 </html>
