@@ -46,3 +46,10 @@ Which of the following is not a literal value:
     - "1234"
     - '"foobar"'
     - "true"
+
+An arithmetic operations on an int and a double produce:
+  answer: double
+  distractors:
+    - int
+    - depends on how the value is used
+    - the type of the first operand
