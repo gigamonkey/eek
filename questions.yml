@@ -53,3 +53,45 @@ An arithmetic operations on an int and a double produce:
     - int
     - depends on how the value is used
     - the type of the first operand
+
+Which of these is the correct way to declare and initialize an ArrayList of integer values?:
+  answer: ArrayList<Integer> nums = new ArrayList<>();
+  distractors:
+    - ArrayList<Integer>() nums = new ArrayList<>;
+    - ArrayList<int> nums = new ArrayList<>();
+    - ArrayList<int> nums = new ArrayList<int>();
+
+What data type would be best to represent the number of kids in a classroom:
+  answer: int
+  distractors:
+    - double
+    - boolean
+    - String
+
+How many times will a for loop with the header (int i = 2; i<=12; i += 2) run, assuming i isn't changed in the body of the loop?:
+  answer: 6
+  distractors:
+    - 7
+    - 12
+    - 10
+
+What data type has the literal values true and false?:
+  answer: boolean
+  distractors:
+    - Boolean
+    - int
+    - double
+
+How do you correctly initialize a two-dimensional  array of ints with dimensions (i,j)?:
+  answer: int[][] array = new int[i][j];
+  distractors:
+    - int[][] array = new int[i][j]();
+    - int[i][j] array = new int[][];
+    - int[][] array = int[i][j];
+
+Which of these will print (1, 1)?:
+  answer: System.out.print("(1, 1)");
+  distractors:
+    - System.out.print("1", "1");
+    - System.print.out("(1, 1)");
+    - System.out.print(1, 1);
