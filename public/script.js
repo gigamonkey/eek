@@ -73,10 +73,14 @@ const doAnimation = (e, correct, clazz) => {
     highlightAnswer(correct);
     e.classList.remove(clazz);
     adjustCheese(deck);
-    setTimeout(() => {
-      next();
+    if (clazz === 'zoom') {
+      setTimeout(() => {
+        next();
+        locked = false;
+      }, 400);
+    } else {
       locked = false;
-    }, clazz === 'zoom' ? 400 : 800);
+    }
   };
   e.classList.add(clazz);
 };
