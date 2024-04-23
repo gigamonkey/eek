@@ -18,6 +18,8 @@ const doc = byId();
 
 const question = $('#game div.question');
 const answers = $$('#game div.answers div');
+const cards = [...$('#questions').children].map(html => ({ html }));
+const deck = new State(cards, [ 3, 5 ]);
 
 answers.forEach((e, i) => e.onclick = () => choose(i));
 
@@ -110,7 +112,7 @@ const addCheeseBar = (cards) => {
   cards.forEach(c => {
     c.cheese = html('<span>🧀</span>');
     c.cheese.style.opacity = 0;
-    bar.append(c.cheese);
+    bar.prepend(c.cheese);
   });
 };
 
@@ -138,10 +140,6 @@ const highlightAnswer = (e) => {
   e.classList.add('correct');
 }
 
-const cards = [...$('#questions').children].map(html => ({ html }));
-let deck = new State(cards, [ 3, 5 ]);
-
-
 const next = () => {
   $$('#game div.answers div.correct').forEach(e => e.classList.remove('correct'));
   const card = deck.nextCard();
@@ -154,9 +152,7 @@ const next = () => {
 
 const start = (game) => {
   document.body.append(game);
-
-
-  addCheeseBar(cards);
+  addCheeseBar(deck.deck);
   adjustCheese(deck);
   next();
 };
